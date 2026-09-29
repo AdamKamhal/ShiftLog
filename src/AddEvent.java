@@ -1,8 +1,8 @@
-import java.util.List;
+import java.util.*;
 
 public class AddEvent {
 
-    public Event addEvent(List<Equipment> equipments){
+    public Event addEvent(Map<Integer,Equipment> equipments){
         System.out.println("Enter date of event!");
         int date = HelpMethods.InputInteger();
 
@@ -12,34 +12,61 @@ public class AddEvent {
         System.out.println("Choose Equipment!");
         Equipment equipment = findEquipment(equipments);
 
-        System.out.println("Enter type of event!");
-        String type = HelpMethods.InputString();
+        Type type =chooseType();
 
-        System.out.println("Enter priority of event!");
-        String priority = HelpMethods.InputString();
+        Priority priority = choosePriority();
 
         System.out.println("Write short description of event!");
         String log = HelpMethods.InputString();
 
         return new Event(date,worker,equipment,type,priority,log);
     }
-    private Equipment findEquipment(List<Equipment> equipments){
-            System.out.println("Enter number of equipment!");
+    private Equipment findEquipment(Map<Integer,Equipment> equipments){
             while (true) {
-                int i = 0;
-                for (Equipment eq : equipments) {
-                    System.out.println(i + ": " + eq.getName());
-                    i++;
+                System.out.println("Enter ID of equipment!");
+                for(Map.Entry<Integer,Equipment> entry : equipments.entrySet()){
+                    System.out.println("ID: " + entry.getKey() + " - " + entry.getValue().getName());
                 }
-                int input = HelpMethods.InputInteger();
-                if (input > -1 && input < equipments.size()) {
-                    Equipment equipment = equipments.get(input);
+                int idInput =HelpMethods.InputInteger();
+                Equipment equipment = equipments.get(idInput);
+                if(equipment!=null){
                     return equipment;
-                } else {
-                    System.out.println("Invalid input, try again");
                 }
+                System.out.println("Invalid ID");
             }
+    }
 
+    private Priority choosePriority() {
+        Priority[]priorities = Priority.values();
+        while (true) {
+            System.out.println("Enter priority of event!");
+            int i=0;
+            for(Priority priority: priorities){
+                System.out.println(i + " - " + priority);
+                i++;
+            }
+            int priorityInput=HelpMethods.InputInteger();
+            if(priorityInput>=0 && priorityInput<priorities.length ){
+                return priorities[priorityInput];
+            }
+            System.out.println("Invalid input");
+        }
+    }
 
+    private  Type chooseType(){
+        Type[]types = Type.values();
+        while (true){
+            System.out.println("Enter type of event!");
+            int i=0;
+            for (Type type:types){
+                System.out.println(i + " - " + type);
+                i++;
+            }
+            int typeInput =HelpMethods.InputInteger();
+            if(typeInput>=0 && typeInput<types.length){
+                return types[typeInput];
+            }
+            System.out.println("Invalid input!");
+        }
     }
 }

@@ -2,12 +2,12 @@ public class Event {
     private int date;
     private String workerName;
     private Equipment equipment;
-    private String eventType;
-    private String priority;
+    private Type eventType;
+    private Priority priority;
     private String log;
 
     public Event(int date,String workerName,Equipment equipment,
-                 String eventType,String priority,String log){
+                 Type eventType,Priority priority,String log){
         this.date=date;
         this.workerName=workerName;
         this.equipment=equipment;
@@ -16,7 +16,7 @@ public class Event {
         this.log=log;
     }
     public String toString(){
-        return "---->Log/Event<---- \n-------------------- \n" +
+        return "---->Log/Event<---- " +
                 "\nDate: " + date +
                 "\nWorker: " +workerName +
                 "\nEquipment: " + equipment +
@@ -27,5 +27,13 @@ public class Event {
 
     public Equipment getEquipment(){
         return equipment;
+    }
+
+    public Type getEventType() {
+        return eventType;
+    }
+
+    public Priority getPriority() {
+        return priority;
     }
 }

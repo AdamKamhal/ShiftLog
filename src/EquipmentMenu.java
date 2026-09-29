@@ -1,86 +1,72 @@
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class EquipmentMenu {
-   private List<Equipment> equipments =new ArrayList<>();
+  // private List<Equipment> equipments =new ArrayList<>();
+   private Map<Integer,Equipment> equipments = new HashMap<>();
 
     public void menu(){
         while (true) {
-            System.out.println("Pick one of Selections: " +
-                    "\n1 - Add Equipment" +
-                    "\n2 - Show Equipment" +
-                    "\n3 - Find Equipment" +
-                    "\n0 - Back");
+            System.out.println("""
+                    Pick one of Selections:
+                    1 - Add Equipment
+                    2 - Show Equipment
+                    3 - Find Equipment
+                    4 - Remove Equipment
+                    0 - Back""");
 
 
                 switch (HelpMethods.InputInteger()) {
-                    case 0:
+                    case 0-> {
                         return;
-                    case 1:
+                    }
+                    case 1->{
                         AddEquipent();
-                        break;
-                    case 2:
+                    }
+                    case 2-> {
                         ShowEquipment();
-                        break;
-                    case 3:
+                    }
+                    case 3 ->{
                         FindEquipment();
-                        break;
+                    }
+                    case 4 ->{
+                        removeEquipment();
+                    }
                 }
         }
     }
 
-    public void AddEquipent(){
+    public void AddEquipent() {
+        int ID = addUniqueID();
         System.out.println("Enter equipment name:");
-        String name =HelpMethods.InputString();
-        int ID=addUniqueID();
+        String name = HelpMethods.InputString();
         System.out.println("Enter location of equipment");
-        String location=HelpMethods.InputString();
-            Equipment equipment = new Equipment(name, ID, location);
-            System.out.println("Successfully create new Equipment");
-            equipments.add(equipment);
+        String location = HelpMethods.InputString();
+        Equipment equipment = new Equipment(name, ID, location);
+        equipments.put(ID, equipment);
+        System.out.println("Successfully create new Equipment");
     }
 
     private int addUniqueID () {
         System.out.println("Enter equipment ID:");
         while (true) {
-            int idInput = HelpMethods.InputInteger();
-            if (!equipments.isEmpty()) {
-                boolean duplicity = false;
-                for (Equipment eq : equipments) {
-                    if (eq.getID().equals(idInput)) {
-                        duplicity = true;
-                        break;
-                    }
-                }
-                if (!duplicity) {
-                    return idInput;
-                }
-                System.out.println("Already used ID, enter again");
-            } else {
-                return idInput;
+            int inputID = HelpMethods.InputInteger();
+            if (!equipments.containsKey(inputID)) {
+                return inputID;
             }
+            System.out.println("ID is already use");
         }
     }
 
     public void ShowEquipment(){
-            if(!equipments.isEmpty()) {  //notgate
-                int i = 0;
-                System.out.println("Pick one Equipment");
-                for (Equipment eq : equipments) {
-                    System.out.println(i + ": " + eq.getName());
-                    i++;
-                }
-                System.out.println("Enter number of equipment you want show");
-                int input=HelpMethods.InputInteger();
-                if(input<equipments.size() && input>-1){
-                    System.out.println(equipments.get(input));
-                }
-                else {
-                    System.out.println("Invalid input");
-                }
+            if(equipments.isEmpty()) {
+                System.out.println("NO logged Equipment.");
+                return;
             }
-            else {
-                System.out.println("Equipment list is empty!");
+            System.out.println("Showing All Equipment logs");
+            for(Equipment equipment : equipments.values()){
+                System.out.println("=================");
+                System.out.println(equipment);
+                System.out.println("=================");
             }
     }
 
@@ -88,20 +74,32 @@ public class EquipmentMenu {
         if(!equipments.isEmpty()) {  //notgate
                     System.out.println("Enter ID number of ");
                     int keySearch = HelpMethods.InputInteger();
-                    for (Equipment eq : equipments) {
-                        if (eq.getID().equals(keySearch)) {
-                            System.out.println(eq);
-                            return;
-                        }
+                    Equipment equipment = equipments.get(keySearch);
+                    if(equipment!=null){
+                        System.out.println(equipment);
+                        return;
                     }
                     System.out.println("Equipment not found");
+                    return;
         }
-        else {
-            System.out.println("Equipment list is empty!");
-        }
+        System.out.println("No Logged Equipment");
     }
 
-    public List<Equipment> getEquipments(){
+    public void removeEquipment(){
+        if(equipments.isEmpty()){
+            System.out.println("No equipments logged.");
+            return;
+        }
+        System.out.println("Enter ID of Equipment to remove");
+        int idToRemove = HelpMethods.InputInteger();
+        if(equipments.remove(idToRemove)!=null){
+            System.out.println("Equipment has been successfully removed.");
+            return;
+        }
+        System.out.println("Invalid ID input!");
+    }
+
+    public Map<Integer,Equipment> getEquipments(){
         return equipments;
     }
 

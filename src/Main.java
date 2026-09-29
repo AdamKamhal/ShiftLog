@@ -12,14 +12,15 @@ public class Main {
 
 
             switch (HelpMethods.InputInteger()) {
-                case 0:
+                case 0-> {
                     return;
-                case 1:
+                }
+                case 1->{
                     equipmentMenu.menu();
-                    break;
-                case 2:
+                }
+                case 2->{
                     eventMenu.menu(equipmentMenu.getEquipments());
-                    break;
+                }
             }
         }
     }
