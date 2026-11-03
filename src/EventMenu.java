@@ -1,5 +1,12 @@
+import java.time.DateTimeException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.ResolverStyle;
 import java.util.*;
 import java.util.function.*;
+import java.util.stream.*;
+import static java.lang.IO.*;
 
 
 public class EventMenu {
@@ -13,42 +20,37 @@ public class EventMenu {
                      3 - Find Events by Equipment
                      4 - All Events by type
                      5 - All Events by priority
+                     6 - All Events sorted by date
+                     7 - Advanced filtering
+                     8 - Statistics
                      0 - Back""");
 
-
             switch (HelpMethods.InputInteger()) {
-                case 0-> {
-                    return;
-                }
-                case 1->{
-                    addEvent(equipments);
-                }
-                case 2 ->{
-                    showEvents(equipments);
-                }
-                case 3 ->{
-                    findEventsByEquipment(equipments);
-                }
-                case 4 ->{
-                    filterEventsByType(equipments);
-                }
-                case 5 -> {
-                    filterEventsByPriority(equipments);
-                }
+                case 0-> {return;}
+                case 1-> addEvent(equipments);
+                case 2 -> showEvents(equipments);
+                case 3 -> findEventsByEquipment(equipments);
+                case 4 -> filterEventsByType(equipments);
+                case 5 -> filterEventsByPriority(equipments);
+                case 6 -> sortEventsByDateTime(equipments);
+                case 7 -> advancedFilterMenu(equipments);
+                case 8 -> showEventStatistics(equipments);
+                default -> println("Invalid input!");
             }
         }
     }
-    public void addEvent(Map<Integer,Equipment> equipments){
+
+    private void addEvent(Map<Integer,Equipment> equipments){
         if(equipments.isEmpty()){
             System.out.println("No equipments available to add event");
             return;
         }
         AddEvent createEvent =new AddEvent();
         Event newEvent = createEvent.addEvent(equipments);
-        newEvent.getEquipment().getEvents().add(newEvent);
+        newEvent.getEquipment().addEvent(newEvent);
     }
 
-    public void showEvents(Map<Integer,Equipment> equipments) {
+    private void showEvents(Map<Integer,Equipment> equipments) {
         if (equipments.isEmpty()) {
             System.out.println("No logged Equipment!");
             return;
@@ -56,12 +58,29 @@ public class EventMenu {
         System.out.println("Showing all save Evens");
         for (Equipment equipment : equipments.values()){
             if(!equipment.getEvents().isEmpty()) {
-                equipment.getEvents().forEach(event -> System.out.println(event));
+                equipment.getEvents().forEach(System.out::println);
             }
         }
     }
 
-    public void findEventsByEquipment(Map<Integer,Equipment> equipments){
+    private void sortEventsByDateTime(Map<Integer,Equipment> equipments){
+       List<Event> event= getAllEvents(equipments)
+                 .sorted(Comparator.comparing(Event::getDate).reversed())
+                 .toList();
+       if(event.isEmpty()){
+           println("No logged Events");
+           return;
+        }
+       event.forEach(System.out::println);
+    }
+
+    private Stream<Event> getAllEvents(Map<Integer,Equipment> equipments){
+        return equipments.values().stream().flatMap(equipment -> equipment.getEvents().stream());
+    }
+
+
+
+    private void findEventsByEquipment(Map<Integer,Equipment> equipments){
         if(equipments.isEmpty()){
             System.out.println("No logged Equipment!");
             return;
@@ -82,7 +101,7 @@ public class EventMenu {
         }
     }
 
-    public void filterEventsByType(Map<Integer,Equipment> equipments){
+    private void filterEventsByType(Map<Integer,Equipment> equipments){
         Type[]types=Type.values();
         while (true) {
             int i =0;
@@ -101,7 +120,7 @@ public class EventMenu {
         }
     }
 
-    public void filterEventsByPriority(Map<Integer,Equipment> equipments){
+    private void filterEventsByPriority(Map<Integer,Equipment> equipments){
         Priority[]priorities=Priority.values();
         while(true){
             int i =0;
@@ -120,19 +139,129 @@ public class EventMenu {
         }
     }
 
+    private void advancedFilterMenu(
+            Map<Integer, Equipment> equipments) {
+        println("Choose at least one filter!");
+        Type typeFilter = askEventType();
+        Priority priorityFilter = askPriority();
+        LocalDateTime dateTimeFilter = askFromDate();
+
+        advancedFilter(equipments,typeFilter,priorityFilter,dateTimeFilter);
+    }
+
+    private Type askEventType() {
+        Type [] types =Type.values();
+            int i=1;
+            for (Type type : types){
+                println(i + ": " + type.name());
+                i++;
+            }
+        while (true) {
+            println("Choose type filter , 0 for ignoring this filter");
+            int filter = HelpMethods.InputInteger();
+            if(filter==0){
+                return null;
+            }
+            if(filter>0 && filter<= types.length) {
+                return types[filter-1];
+            }
+            println("Invalid input, try again!");
+        }
+    }
+
+    private Priority askPriority() {
+        Priority [] priorities =Priority.values();
+        int i = 1;
+        for (Priority priority:priorities){
+            println(i + ": " + priority.name());
+            i++;
+        }
+        while (true) {
+            println("Choose priority filter, 0 for ignoring this filter");
+            int filter = HelpMethods.InputInteger();
+            if(filter==0){
+                return null;
+            }
+            if(filter>0 && filter<=priorities.length){
+                return priorities[filter-1];
+            }
+            println("Invalid input , try again!");
+        }
+    }
+
+    private LocalDateTime askFromDate() {
+        while (true) {
+            try {
+                println("Enter date: DD.MM.YYYY or 0 for skip");
+                String dateFilter = HelpMethods.InputString();
+                if (dateFilter.equals("0")) {
+                    return null;
+                }
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.uuuu")
+                        .withResolverStyle(ResolverStyle.STRICT);
+                LocalDateTime date = LocalDate.parse(dateFilter, formatter).atStartOfDay();
+                return date;
+
+
+            }catch(DateTimeException e){
+            println("Invalid date enter");
+            }
+        }
+    }
+
+    private void advancedFilter(
+            Map<Integer, Equipment> equipments,
+            Type type,
+            Priority priority,
+            LocalDateTime fromDate){
+        if (type==null && priority==null && fromDate == null){
+            println("No filter selected");
+            return;
+        }
+
+       List<Event> list = getAllEvents(equipments)
+                .filter(event -> type==null || event.getEventType() == type)
+                .filter(event -> priority ==null || event.getPriority() == priority)
+                .filter(event -> fromDate==null || !event.getDate().isBefore(fromDate))
+                .toList();
+       if(list.isEmpty()){
+           println("No event match choose conditions");
+           return;
+       }
+        list.forEach(System.out::println);
+    }
+
     private <T> void genericsFilter(Map<Integer,Equipment> equipments, T filter, Function<Event,T> function){
-        boolean findSomething =false;
-           for (Equipment equipment: equipments.values()){
-               for(Event event: equipment.getEvents()){
-                 T value = function.apply(event);
-                 if(value.equals(filter)){
-                     System.out.println(event);
-                     findSomething=true;
-                 }
-               }
-           }
-           if(!findSomething){
+      List<Event> eventList = getAllEvents(equipments)
+               .filter(event -> filter.equals(function.apply(event)))
+              .toList();
+
+           if(eventList.isEmpty()){
                System.out.println("No event find");
+               return;
            }
+           eventList.forEach(System.out::println);
+    }
+
+    private void showEventStatistics(
+            Map<Integer, Equipment> equipments){
+        List<Event> events = getAllEvents(equipments).toList();
+        println("===== EVENTS STATISTICS =====");
+
+        println("Total Events: " + events.size());
+
+        println("Events by priority:");
+        Map<Priority,Long> priorityCount = events.stream()
+                .collect(Collectors.groupingBy(Event::getPriority,Collectors.counting()));
+        for (Priority priority:Priority.values()){
+            println(priority.name() + ": " + priorityCount.getOrDefault(priority,0L));
+        }
+
+        println("Events by type:");
+        Map<Type,Long> typeCount = events.stream()
+                .collect(Collectors.groupingBy(Event::getEventType,Collectors.counting()));
+        for(Type type:Type.values()){
+            println(type.name() + ": " + typeCount.getOrDefault(type,0L));
+        }
     }
 }

@@ -5,7 +5,7 @@ and recording events associated with individual equipment.
 
 ## Version
 
-Current version: v0.1
+Current version: v0.3
 
 ## Features
 
@@ -16,6 +16,13 @@ Current version: v0.1
 - Add events to equipment
 - Display event history
 - Find events by equipment
+- Advanced filtering of events
+- Events sorted by date and time
+- Event types (MAINTENANCE,FAIL,MESSAGE)
+- Event priority (LOW,MEDIUM, HIGH,CRITICAL)
+- Find events by priority
+- Find events by type
+- Basic event statistics
 
 ## Project status
 
@@ -25,9 +32,9 @@ gradually be expanded with additional functionality.
 
 ## Planned
 
-- Improved event categories and priorities
-- Date and time handling
 - Save/load
-- Statistics and filtering
 - Database support
 - GUI
+- Automatic UUID generation for equipment
+- Security levels (Operator, Maintenance,Admin)
+- User authentication and admin-managed accounts

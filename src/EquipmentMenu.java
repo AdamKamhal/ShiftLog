@@ -15,6 +15,8 @@ public class EquipmentMenu {
                     0 - Back""");
 
 
+
+
                 switch (HelpMethods.InputInteger()) {
                     case 0-> {
                         return;
@@ -100,7 +102,7 @@ public class EquipmentMenu {
     }
 
     public Map<Integer,Equipment> getEquipments(){
-        return equipments;
+        return Collections.unmodifiableMap(equipments);
     }
 
 }

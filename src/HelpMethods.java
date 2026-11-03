@@ -13,7 +13,6 @@ public class HelpMethods {
                 System.out.println("Write only numbers");
             }
         }
-
     }
     public static String InputString(){
             return sc.nextLine();

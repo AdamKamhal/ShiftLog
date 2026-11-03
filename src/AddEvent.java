@@ -3,9 +3,6 @@ import java.util.*;
 public class AddEvent {
 
     public Event addEvent(Map<Integer,Equipment> equipments){
-        System.out.println("Enter date of event!");
-        int date = HelpMethods.InputInteger();
-
         System.out.println("Enter your lastname!");
         String worker = HelpMethods.InputString();
 
@@ -19,7 +16,7 @@ public class AddEvent {
         System.out.println("Write short description of event!");
         String log = HelpMethods.InputString();
 
-        return new Event(date,worker,equipment,type,priority,log);
+        return new Event(worker,equipment,type,priority,log);
     }
     private Equipment findEquipment(Map<Integer,Equipment> equipments){
             while (true) {
