@@ -15,13 +15,26 @@ public class Event {
 
     public Event(String workerName,Equipment equipment,
                  Type eventType,Priority priority,String log){
-        this.date=LocalDateTime.now();
+        this(workerName,
+            equipment,
+            eventType,
+           priority,
+           log,
+           LocalDateTime.now()
+        );
+    }
+
+    public Event(String workerName, Equipment equipment,
+                 Type eventType, Priority priority,
+                 String log, LocalDateTime date){
         this.workerName=workerName;
         this.equipment=equipment;
         this.eventType=eventType;
-        this.priority=priority;
+        this.priority= priority;
         this.log=log;
+        this.date=date;
     }
+
     public String toString(){
         return "---->Log/Event<---- " +
                 "\nDate: " + date.format(DATE_FORMAT) +
@@ -47,5 +60,13 @@ public class Event {
 
     public LocalDateTime getDate(){
         return date;
+    }
+
+    public String getWorkerName() {
+        return workerName;
+    }
+
+    public String getLog() {
+        return log;
     }
 }

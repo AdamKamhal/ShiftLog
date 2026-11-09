@@ -1,8 +1,7 @@
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import static java.lang.IO.println;
+import static java.lang.IO.*;
 
 public class Equipment {
    private String name;
@@ -14,7 +13,7 @@ public class Equipment {
         this.ID=ID;
         this.location=location;
     }
-    // toString=============================================
+    // toString=========================================================================================================
 
     @Override
     public String toString(){
@@ -23,10 +22,21 @@ public class Equipment {
                 "\nLocation: " + location;
     }
 
-    //======================================================
+    //==================================================================================================================
 
+    //Setters===========================================================================================================
 
-    //Getters ==============================================
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    //==================================================================================================================
+
+    //Getters ==========================================================================================================
 
     public String getName() {
         return name;
@@ -44,7 +54,7 @@ public class Equipment {
         return Collections.unmodifiableList(events);
     }
 
-    //========================================================
+    //==================================================================================================================
 
     public void addEvent(Event event){
         if(event==null){

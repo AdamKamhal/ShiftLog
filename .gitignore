@@ -40,3 +40,11 @@ build/
 
 # Compiled files
 *.class
+# SQLite database
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+
+# Maven build output
+/target/

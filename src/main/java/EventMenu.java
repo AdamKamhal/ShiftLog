@@ -1,3 +1,4 @@
+import java.sql.SQLException;
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -41,13 +42,18 @@ public class EventMenu {
     }
 
     private void addEvent(Map<Integer,Equipment> equipments){
-        if(equipments.isEmpty()){
-            System.out.println("No equipments available to add event");
-            return;
+        try {
+            if (equipments.isEmpty()) {
+                System.out.println("No equipments available to add event");
+                return;
+            }
+            AddEvent createEvent = new AddEvent();
+            Event newEvent = createEvent.addEvent(equipments);
+            DatabaseManager.insertEvent(newEvent);
+            newEvent.getEquipment().addEvent(newEvent);
+        }catch (SQLException e){
+            println(e.getMessage());
         }
-        AddEvent createEvent =new AddEvent();
-        Event newEvent = createEvent.addEvent(equipments);
-        newEvent.getEquipment().addEvent(newEvent);
     }
 
     private void showEvents(Map<Integer,Equipment> equipments) {
