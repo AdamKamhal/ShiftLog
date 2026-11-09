@@ -6,7 +6,7 @@
 
     <groupId>com.shiftlog</groupId>
     <artifactId>shiftlog</artifactId>
-    <version>0.4-SNAPSHOT</version>
+    <version>0.4</version>
 
     <properties>
         <maven.compiler.release>26</maven.compiler.release>
