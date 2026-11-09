@@ -25,7 +25,7 @@ Current version: v0.4
 - Basic event statistics
 - Full CRUD for equipment
 - Persistent event storage and loading
-- SQLite database integration using JDBS
+- SQLite database integration using JDBC
 - Automatic database initialization
 
 ## Technologies
